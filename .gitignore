@@ -1,1 +1,6 @@
 print_16_with_4_threads
+dct2
+dct2.o
+ompdct2
+ompdct2.o
+hello_omp
