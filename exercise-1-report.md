@@ -52,3 +52,30 @@ print(time_per_frame)
 With the result being around $3.9$ s/frame.
 
 ### c):
+After compiling `ompdct2` and running with the `time` bash function, the results were:
+```python
+time_per_frame = 4.253 / 3
+print(time_per_frame)
+```
+
+With the result being around $1.42$ s/frame
+
+Now I'll do a calculation for how much the speedup was:
+```python
+time_per_frame_non_omp = 11.704 / 3
+time_per_frame_omp = 4.253 / 3
+print(time_per_frame_non_omp / time_per_frame_omp)
+```
+
+The speed-up with `omp` is $2.75 \times$ over not using `omp`.
+
+d):
+- 1 thread:
+    - $11.677$s
+- 2 threads:
+    - $7.859$s
+- 3 threads:
+    - $4.057$s
+- 4 threads:
+    - $4.031$s
+
