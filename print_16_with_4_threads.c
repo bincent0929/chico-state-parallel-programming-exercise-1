@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <omp.h>
 
-void Hello_thread(void);
+void Hello_threads(int thread_count);
 
 int main(int argc, char *argv[])
 {
@@ -25,21 +25,23 @@ int main(int argc, char *argv[])
 
 // Edit this pragma to include the `for` parameter
 // maybe add default(none) to specifically define private, global, etc.
-#pragma omp parallel num_threads(thread_count)
-    Hello_thread();
+//#pragma omp parallel num_threads(thread_count)
+    Hello_threads(thread_count);
 
     printf("All threads now done, main program proceeding to exit\n");
 
     return 0;
 }
 
-void Hello_thread(void)
+void Hello_threads(int thread_count)
 {
-    int my_rank = omp_get_thread_num();
-    // remove the thread count
-    // the threads can just use the global value
-    // instead of creating a private one every time
-    int thread_count = omp_get_num_threads();
-
-    printf("Hello from OMP thread %d of %d\n", my_rank, thread_count);
+    int i;
+    int my_rank;
+    # pragma omp parallel num_threads(thread_count) default(none) private(i, my_rank) shared(thread_count)
+    {
+        my_rank = omp_get_thread_num();
+        for (i = 0; i < 4; i++) {
+            printf("Hello from OMP thread %d of %d\n", my_rank, thread_count);
+        }
+    }
 }
