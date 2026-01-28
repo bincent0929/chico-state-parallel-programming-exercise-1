@@ -79,3 +79,7 @@ d):
 - 4 threads:
     - $4.031$s
 
+Here's a graph of the speed-up:
+![](runtime-threads-graph.svg)
+
+e):
