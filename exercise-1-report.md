@@ -69,7 +69,7 @@ print(time_per_frame_non_omp / time_per_frame_omp)
 
 The speed-up with `omp` is $2.75 \times$ over not using `omp`.
 
-d):
+### d):
 - 1 thread:
     - $11.677$s
 - 2 threads:
@@ -82,4 +82,12 @@ d):
 Here's a graph of the speed-up:
 ![](runtime-threads-graph.svg)
 
-e):
+### e):
+The parallel portion of the code is everything in the `for` loop that comes just after the `pragma` in the `main` function within `ompdct2.c`. Everything else in the program is sequential.
+
+This `for` loop composes a large portion of the program. It has other `for` loops within it and the `dct` and `idct` functions. By Ahmdal's law, this means that, theoretically, because most of the time of the code is spend on the parallelized portion, the program, overall, will completed much quicker.
+
+Determining exactly how much time is spent on the parallelized portion would basically result in it being equal to the time it takes to complete the whole of the program.
+
+## Part 2
+### a):
