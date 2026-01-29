@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <time.h>
+#include <omp.h>
 
 
 //#define IMG_HEIGHT (300)
@@ -54,6 +55,7 @@ FLOAT PSF[9] = {-K/F, -K/F, -K/F, -K/F, K+1.0, -K/F, -K/F, -K/F, -K/F};
 
 int main(int argc, char *argv[])
 {
+    int thread_count = 4;
     int fdin, fdout, bytesRead=0, bytesWritten=0, bytesLeft, i, j, iter, rc, pixel, readcnt=0, writecnt=0;
     UINT64 microsecs=0, millisecs=0;
     FLOAT temp, fstart, fnow;
@@ -144,7 +146,8 @@ int main(int argc, char *argv[])
     clock_gettime(CLOCK_MONOTONIC, &now);
     fnow = (FLOAT)now.tv_sec  + (FLOAT)now.tv_nsec / 1000000000.0;
     printf("\nstart test at %lf\n", fnow-fstart);
-
+//# pragma omp parallel for num_threads(thread_count) default(none) private(iter, i, j, temp) \
+shared(PSF, convR, convG, convB, R, G, B)
     for(iter=0; iter < ITERATIONS; iter++)
     {
         // Skip first and last row, no neighbors to convolve with
@@ -203,6 +206,7 @@ int main(int argc, char *argv[])
     clock_gettime(CLOCK_MONOTONIC, &now);
     fnow = (FLOAT)now.tv_sec  + (FLOAT)now.tv_nsec / 1000000000.0;
     printf("stop test at %lf for %d frames\n\n", fnow-fstart, ITERATIONS);
+    printf("\nCompleted test at %lf for %d create-to-join and %lf FPS\n\n", fnow - fstart, ITERATIONS, (FLOAT)ITERATIONS/(fnow-fstart));
 
     rc=write(fdout, (void *)header, HEADER_SIZE-1);
 

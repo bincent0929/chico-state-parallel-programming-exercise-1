@@ -91,3 +91,10 @@ Determining exactly how much time is spent on the parallelized portion would bas
 
 ## Part 2
 ### a):
+#### sharpen_grid.c
+For the `sharpen_grid.c` program, I didn't make any changes to it and used the default `900` iterations for sharpening the image and got `43.815142 FPS`.
+
+The output looked a little weird to me when I opened it with an image viewer. So I tried to lower the iterations to `20` iterations, but it still came out looking weird. From `20` iterations I got `44.310001 FPS`.
+#### shared.c
+For the non-omp implementation, I got a result of `7.709192 FPS` for `90` iterations.
+

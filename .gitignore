@@ -1,6 +1,14 @@
+hello_omp
 print_16_with_4_threads
+
 dct2
 dct2.o
 ompdct2
 ompdct2.o
-hello_omp
+
+sharpen
+sharpen.o
+sharpen_grid
+sharpen_grid.o
+sharpen_slice
+sharpen_slice.o
