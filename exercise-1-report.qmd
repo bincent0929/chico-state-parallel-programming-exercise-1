@@ -131,14 +131,14 @@ Determining exactly how much time is spent on the parallelized portion would bas
 
 For the `sharpen_grid.c` program, I didn't make any changes to it and used the default `900` iterations for sharpening the image and got `43.815142 FPS`.
 
-The output looked a little weird to me when I opened it with an image viewer. So I tried to lower the iterations to `20` iterations, but it still came out looking weird. From `20` iterations I got `44.310001 FPS`. \##### shared.c I got this when I ran the non-OpenMP `sharpen.c`:
+The output looked a little weird to me when I opened it with an image viewer. So I tried to lower the iterations to `20` iterations, but it still came out looking weird. From `20` iterations I got `44.310001 FPS`. 
+
+##### shared.c I got this when I ran the non-OpenMP `sharpen.c`:
 
 ``` bash
 start test at 0.022464
 stop test at 11.696272 for 90 frames
 ```
-
-Which results in:
 
 ``` {python}
 sharpenc_frames = 90
@@ -147,9 +147,9 @@ sharpenc_stop = 11.696272
 sharpenc_fps = sharpenc_frames / (sharpenc_stop - sharpenc_start)
 ```
 
-From that calculation I got: `{python} f'{sharpenc_fps:.2f}'` FPS.
+Doing the math it comes out to: `{python} f'{sharpenc_fps:.2f}'` FPS.
 
-I create a copy of the program and added OpenMP, set it to use 4 threads, and placed the pragma where recommended to try it, and it didn't really change the outcome. Here's the output:
+I created a copy of the `sharpen.c` program and added OpenMP, set it to use 4 threads, and placed the pragma where recommended to try it, and it didn't really change the outcome. Here's the output:
 
 ``` bash
 start test at 0.021750
@@ -163,6 +163,7 @@ ompsharpenc_stop = 11.689725
 ompsharpenc_fps = ompsharpenc_frames / (ompsharpenc_stop - ompsharpenc_start)
 ```
 
-Rounded to the same place as the last outcome, it's `{python} f'{ompsharpenc_fps:.2f}'` FPS again.
+The outcome is `{python} f'{ompsharpenc_fps:.2f}'` FPS again when rounded to the same degree.
 
-#### PSF convolution Description
+#### PSF Convolution Description
+
