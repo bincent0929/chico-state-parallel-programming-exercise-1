@@ -9,12 +9,12 @@ CDEFS=
 #CFLAGS= -O3 $(INCLUDE_DIRS) $(CDEFS)
 #CFLAGS= -O3 -mcpu=cortex-a7 -mfpu=neon-vfpv4 $(INCLUDE_DIRS) $(CDEFS)
 CFLAGS= -O3 -mssse3 $(INCLUDE_DIRS) $(CDEFS)
-LIBS=-lpthread
+LIBS=-lpthread -fopenmp
 
-PRODUCT=sharpen_grid sharpen_slice sharpen
+PRODUCT=sharpen_grid sharpen_slice sharpen ompsharpen
 
 HFILES= 
-CFILES= sharpen_grid.c sharpen_slice.c sharpen.c
+CFILES= sharpen_grid.c sharpen_slice.c sharpen.c ompsharpen.c
 
 SRCS= ${HFILES} ${CFILES}
 OBJS= ${CFILES:.c=.o}
@@ -33,6 +33,9 @@ sharpen_grid:	sharpen_grid.o
 
 sharpen:	sharpen.o
 	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ sharpen.o $(LIBS)
+
+ompsharpen:	ompsharpen.o
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ ompsharpen.o $(LIBS)
 
 depend:
 
