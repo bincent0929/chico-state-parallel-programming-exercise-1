@@ -91,10 +91,36 @@ Determining exactly how much time is spent on the parallelized portion would bas
 
 ## Part 2
 ### a):
-#### sharpen_grid.c
+#### Modifications
+##### sharpen_grid.c
 For the `sharpen_grid.c` program, I didn't make any changes to it and used the default `900` iterations for sharpening the image and got `43.815142 FPS`.
 
 The output looked a little weird to me when I opened it with an image viewer. So I tried to lower the iterations to `20` iterations, but it still came out looking weird. From `20` iterations I got `44.310001 FPS`.
-#### shared.c
-For the non-omp implementation, I got a result of `7.709192 FPS` for `90` iterations.
+##### shared.c
+I got this when I ran the non-OpenMP `sharpen.c`:
+```bash
+start test at 0.022464
+stop test at 11.696272 for 90 frames
+```
 
+Which results in:
+```python
+fps = 90 / (11.696272 - 0.022464)
+print(fps)
+```
+
+From that calculation I got: 7.71 FPS.
+
+I create a copy of the program and added OpenMP, set it to use 4 threads, and placed the pragma where recommended to try it, and it didn't really change the outcome. Here's the output:
+```bash
+start test at 0.021750
+stop test at 11.689725 for 90 frames
+```
+
+```python
+fps = 90 / (11.689725 - 0.021750)
+print(fps)
+```
+
+Rounded to the same place as the last outcome, it's 7.71 FPS again.
+### PSF convolution Description
