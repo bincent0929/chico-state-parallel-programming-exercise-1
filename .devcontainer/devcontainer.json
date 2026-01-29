@@ -26,8 +26,8 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": 
-	"python -m venv .venv && . .venv/bin/activate && pip install uv && uv pip install jupyter matplotlib && quarto preview /workspaces/chico-state-parallel-programming-exercise-1/exercise-1-report.qmd --no-browser"
+	"postCreateCommand": "python -m venv .venv && . .venv/bin/activate && pip install uv && uv pip install jupyter matplotlib",
+	"postStartCommand": ". .venv/bin/activate && quarto preview /workspaces/chico-state-parallel-programming-exercise-1/exercise-1-report.qmd --no-browser"
 
 	// Configure tool-specific properties.
 	// "customizations": {},
