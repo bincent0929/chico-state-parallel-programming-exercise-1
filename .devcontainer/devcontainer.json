@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/cpp
 {
-	"name": "C, C++, Quarto",
+	"name": "C, C++, Python, Quarto",
 	"build": {
 		"dockerfile": "Dockerfile"
 	},
@@ -20,13 +20,14 @@
 	"features": {
 		"ghcr.io/rocker-org/devcontainer-features/quarto-cli:1": {},
 		"ghcr.io/devcontainers/features/python:1": {}
-	}
+	},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "gcc -v",
+	"postCreateCommand": 
+	"python -m venv .venv && . .venv/bin/activate && pip install uv && uv pip install jupyter matplotlib && quarto preview /workspaces/chico-state-parallel-programming-exercise-1/exercise-1-report.qmd --no-browser"
 
 	// Configure tool-specific properties.
 	// "customizations": {},
