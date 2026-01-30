@@ -144,7 +144,8 @@ stop test at 11.696272 for 90 frames
 sharpenc_frames = 90
 sharpenc_start = 0.022464
 sharpenc_stop = 11.696272
-sharpenc_fps = sharpenc_frames / (sharpenc_stop - sharpenc_start)
+sharpenc_runtime = sharpenc_stop - sharpenc_start
+sharpenc_fps = sharpenc_frames / sharpenc_runtime
 ```
 
 Doing the math it comes out to: `{python} f'{sharpenc_fps:.2f}'` FPS.
@@ -160,10 +161,29 @@ stop test at 11.689725 for 90 frames
 ompsharpenc_frames = 90
 ompsharpenc_start = 0.021750
 ompsharpenc_stop = 11.689725
-ompsharpenc_fps = ompsharpenc_frames / (ompsharpenc_stop - ompsharpenc_start)
+ompsharpenc_runtime = ompsharpenc_stop - ompsharpenc_start
+ompsharpenc_fps = ompsharpenc_frames / ompsharpenc_runtime
 ```
 
 The outcome is `{python} f'{ompsharpenc_fps:.2f}'` FPS again when rounded to the same degree.
 
 #### PSF Convolution Description
+
+::: {.callout-warning}
+Need to read the book and write a description
+:::
+
+### b):
+
+Like I said above the result of running the non-parallelized `sharpen.c` was `{python} f'{sharpenc_fps:.2f}'` FPS.
+
+``` {python}
+sharpen_grid_runtime = 2.031316
+
+sharpen_parallel_speed_up =  sharpenc_runtime / sharpen_grid_runtime
+```
+
+The `sharpen_grid.c` was much faster than `sharpen.c`. With a result of the parallelize grid processing being `{python} f'{sharpen_parallel_speed_up:.2f}'`x faster than sequential processing.
+
+### c):
 
