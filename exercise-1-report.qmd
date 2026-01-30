@@ -222,7 +222,7 @@ import numpy as np
 # System and measured data
 my_system_cores = 8
 threads_used = 12
-actual_speedup = 5.76
+actual_speedup = sharpen_grid_runtime_vs_nparallel_speedup
 seq_time = 11.696272
 par_time = 2.031316
 
@@ -257,7 +257,3 @@ plt.ylim(0, 9)
 plt.show()
 
 ```
-
-::: {.callout-warning}
-Need to compare the results to Amdahl's law and linear speed-up on a graph for the 4x3 thread gridding I test it on. With "S" being assumed to being the # of cores of the system.
-:::
