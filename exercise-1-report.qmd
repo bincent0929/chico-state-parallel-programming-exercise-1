@@ -169,9 +169,7 @@ The outcome was `{python} f'{ompsharpenc_fps:.2f}'` FPS.
 
 #### PSF Convolution Description
 
-::: {.callout-warning}
-Need to read the book and write a description
-:::
+In reading Chapter 24 from [here](http://www.dspguide.com/ch24.htm), very *roughly* in my own words, PSF convolution goes through the image as a matrix using another matrix that initially is composed of all 0's other than the value at `row = 0` and `column = 0`. In doing so, the value in the matrix that is nonzero ends of "spreading out" into a new pattern in the matrix.
 
 ### b):
 
@@ -210,6 +208,56 @@ pthreads_vs_omp_moret_4_speedup = ompsharpenc_runtime_moret_4 / sharpen_grid_run
 
 Even when I change the amount of threads that the OpenMP program can use, it seems to cap out at around a 2.90 seconds runtime. Which is still comes out with the PThreads implementation resulting in a `{python} f'{pthreads_vs_omp_moret_4_speedup:.2f}'`x speedup vs. OpenMP.
 
+``` {python}
+omp_moret_4_vs_nparallel_speedup = sharpenc_runtime / ompsharpenc_runtime_moret_4
+sharpen_grid_runtime_vs_nparallel_speedup = sharpenc_runtime / sharpen_grid_runtime
+```
+
+In terms of how the two compare in speedup vs. the non-parallelized implementation, `ompsharpen.c` is `{python} f'{omp_moret_4_vs_nparallel_speedup:.2f}'`x times faster and `sharpen_grid.c` is `{python} f'{sharpen_grid_runtime_vs_nparallel_speedup:.2f}'`x times faster.
+
+``` {python}
+import matplotlib.pyplot as plt
+import numpy as np
+
+# System and measured data
+my_system_cores = 8
+threads_used = 12
+actual_speedup = 5.76
+seq_time = 11.696272
+par_time = 2.031316
+
+# Calculate parallel fraction from actual data
+# Using effective cores (8) since 12 threads > 8 cores
+f = (my_system_cores * (actual_speedup - 1)) / (actual_speedup * (my_system_cores - 1))
+
+# Generate thread counts
+threads = np.arange(1, 13)
+
+# Linear ideal (capped at core count)
+linear_ideal = np.minimum(threads, my_system_cores)
+
+# Amdahl's law curve
+amdahl_speedup = 1 / ((1 - f) + f / np.minimum(threads, my_system_cores))
+
+# Plot
+plt.figure(figsize=(10, 6))
+plt.plot(threads, linear_ideal, 'b--', label='Linear Ideal (capped at 8 cores)', linewidth=2)
+plt.plot(threads, amdahl_speedup, 'g-', label=f'Amdahl\'s Law (f={f:.3f})', linewidth=2)
+plt.plot(threads_used, actual_speedup, 'ro', markersize=10, label=f'Actual (12 threads, {actual_speedup:.2f}x)')
+plt.axhline(y=my_system_cores, color='gray', linestyle=':', alpha=0.7, label='Core limit')
+
+plt.xlabel('Number of Threads', fontsize=12)
+plt.ylabel('Speedup', fontsize=12)
+plt.title('Speed-up Comparison: Linear Ideal vs Amdahl\'s Law vs Actual\n(8-core system, 4x3 thread grid)', fontsize=14)
+plt.grid(True, alpha=0.3)
+plt.legend(loc='upper left')
+plt.xticks(threads)
+plt.ylim(0, 9)
+
+plt.show()
+
+```
+
 ::: {.callout-warning}
-Need to compare the results to Amdahl's law and lienar speed-up on a graph for the 4x3 thread gridding I test it on. With "S" being assumed to being the # of cores of the system.
+Need to compare the results to Amdahl's law and linear speed-up on a graph for the 4x3 thread gridding I test it on. With "S" being assumed to being the # of cores of the system.
 :::
