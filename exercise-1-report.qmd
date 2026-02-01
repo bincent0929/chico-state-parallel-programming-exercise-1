@@ -1,8 +1,13 @@
 ---
 title: "Parallel Exercise 1 Report"
 format:
-  html:
-    code-fold: true
+  pdf:
+    toc: true
+    number-sections: true
+    code-overflow: wrap
+    code-line-numbers: false
+    geometry:
+      - margin=0.75in
 jupyter: python3
 ---
 
@@ -246,28 +251,25 @@ CPU(s):                   8
 ``` {python}
 import numpy as np
 import matplotlib.pyplot as plt
-# experimental & env data
-S = 8
 
 # finding the average $time optimized$ between the two parallelization methods
-P_omp = (1 - 1/omp_moret_4_vs_nparallel_speedup) / (1 - (1 / S))
-P_pth = (1 - 1/sharpen_grid_runtime_vs_nparallel_speedup) / (1 - (1 / S))
-P_overall = (P_omp + P_pth) / 2
+threads = 8
+time_optimized_omp = (1 - 1/omp_moret_4_vs_nparallel_speedup) / (1 - (1 / threads))
+time_optimized_pthreads = (1 - 1/sharpen_grid_runtime_vs_nparallel_speedup) / (1 - (1 / threads))
+time_optimized_average = (time_optimized_omp + time_optimized_pthreads) / 2
 
-# Amdahls law and Linear Ideal Speed-Up
-N = np.arange(1, S + 1)
-linear_ideal = N
-amdahls = 1 / ((1 - P_overall) + (P_overall / N))
+N = np.arange(1, threads + 1)
+linear_ideal_values = N
+amdahls_values = 1 / ((1 - time_optimized_average) + (time_optimized_average / N))
 
-# plot
 plt.figure()
-plt.plot(N, linear_ideal, label="Linear Ideal")
-plt.plot(N, amdahls, label=f"Amdahls")
-plt.scatter([1], [1.0], label="Single")
-plt.scatter([S], [omp_moret_4_vs_nparallel_speedup], label=f"OpenMP")
-plt.scatter([S], [sharpen_grid_runtime_vs_nparallel_speedup], label=f"PThreaded")
-plt.xlabel("Thread Count")
-plt.ylabel("Speed-up")
+plt.plot(N, linear_ideal_values, label="Linear Ideal Prediction")
+plt.plot(N, amdahls_values, label=f"Amdahl's Prediction")
+plt.scatter([1], [1.0], label="Single-Threaded")
+plt.scatter([threads], [omp_moret_4_vs_nparallel_speedup], label=f"Recorded OpenMP Speedup")
+plt.scatter([threads], [sharpen_grid_runtime_vs_nparallel_speedup], label=f"Recorded PThreaded Speedup")
+plt.xlabel("Threads")
+plt.ylabel("Speedup")
 plt.xticks(N)
 plt.grid(True)
 plt.legend()
