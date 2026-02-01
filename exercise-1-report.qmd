@@ -3,7 +3,7 @@ title: "Parallel Exercise 1 Report"
 format:
   pdf:
     toc: true
-    number-sections: true
+    number-sections: false
     code-overflow: wrap
     code-line-numbers: false
     geometry:
@@ -41,7 +41,9 @@ I decided to move the `my_rank` into the block so that each thread got its priva
 
 This made it so that each thread would print out the same statement four times, individually. Which results in the program printing out 16 results. 
 
-### b): After compiling `dct2.c` and running it, it runs for a little while and then terminates with no output.
+### b): 
+
+After compiling `dct2.c` and running it, it runs for a little while and then terminates with no output.
 
 When I used the `bash` `time` function, I timed the function to take, this was the output:
 
