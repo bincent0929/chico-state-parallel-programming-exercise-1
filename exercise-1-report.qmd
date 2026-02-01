@@ -131,8 +131,8 @@ Now, I'll use that in Amdahl's equation but I'll rearrange it to present the pro
 
 ``` {python}
 # the proportion of the program that is paralleized according to Amdahl's law
-threads = 4
-ompdct2_parallelized_portion = (1 - (1 / omp_dct_speedup)) / (1 - (1 / 4))
+ompdct2_threads = 4
+ompdct2_parallelized_portion = (1 - (1 / omp_dct_speedup)) / (1 - (1 / ompdct2_threads))
 ```
 
 By my calculations, the portion of the program that was parallelized was `{python} f'{(ompdct2_parallelized_portion * 100):.2f}%'` leaving `{python} f'{((1 - ompdct2_parallelized_portion) * 100):.2f}%'` that wasn't parallelized, according to Amdahl's Law.
@@ -222,7 +222,7 @@ ompsharpenc_runtime_moret_4 = 2.926082
 pthreads_vs_omp_moret_4_speedup = ompsharpenc_runtime_moret_4 / sharpen_grid_runtime
 ```
 
-Even when I change the amount of threads that the OpenMP program can use, it seems to cap out at around a 2.90 seconds runtime. Which is still comes out with the PThreads implementation resulting in a `{python} f'{pthreads_vs_omp_moret_4_speedup:.2f}'`x speedup vs. OpenMP.
+Even when I change the amount of threads that the OpenMP program can use, it seems to cap out at around a 2.90 seconds runtime. Which still comes out with the PThreads implementation resulting in a `{python} f'{pthreads_vs_omp_moret_4_speedup:.2f}'`x speedup vs. OpenMP.
 
 ``` {python}
 omp_moret_4_vs_nparallel_speedup = sharpenc_runtime / ompsharpenc_runtime_moret_4
@@ -231,46 +231,46 @@ sharpen_grid_runtime_vs_nparallel_speedup = sharpenc_runtime / sharpen_grid_runt
 
 In terms of how the two compare in speedup vs. the non-parallelized implementation, `ompsharpen.c` is `{python} f'{omp_moret_4_vs_nparallel_speedup:.2f}'`x times faster and `sharpen_grid.c` is `{python} f'{sharpen_grid_runtime_vs_nparallel_speedup:.2f}'`x times faster.
 
+I do believe that if I added a `collapse` to my program that the OpenMP program will converge closer in time to the PThreads implementation.
+
+#### By Amdahl's Law And Linear Ideal Speedup
+
+Now I'll use the results I got in Amdah's Law and Linear Ideal Speedup.
+
+According to running `lscpu`, I have 8 CPU(s) to work with:
+```bash
+CPU(s):                   8
+  On-line CPU(s) list:    0-7
+```
+
 ``` {python}
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
+# experimental & env data
+S = 8
 
-# System and measured data
-my_system_cores = 8
-threads_used = 12
-actual_speedup = sharpen_grid_runtime_vs_nparallel_speedup
+# finding the average $time optimized$ between the two parallelization methods
+P_omp = (1 - 1/omp_moret_4_vs_nparallel_speedup) / (1 - (1 / S))
+P_pth = (1 - 1/sharpen_grid_runtime_vs_nparallel_speedup) / (1 - (1 / S))
+P_overall = (P_omp + P_pth) / 2
 
-seq_time = 11.696272
-par_time = 2.031316
+# Amdahls law and Linear Ideal Speed-Up
+N = np.arange(1, S + 1)
+linear_ideal = N
+amdahls = 1 / ((1 - P_overall) + (P_overall / N))
 
-# Calculate parallel fraction from actual data
-# Using effective cores (8) since 12 threads > 8 cores
-f = (my_system_cores * (actual_speedup - 1)) / (actual_speedup * (my_system_cores - 1))
-
-# Generate thread counts
-threads = np.arange(1, 13)
-
-# Linear ideal (capped at core count)
-linear_ideal = np.minimum(threads, my_system_cores)
-
-# Amdahl's law curve
-amdahl_speedup = 1 / ((1 - f) + f / np.minimum(threads, my_system_cores))
-
-# Plot
-plt.figure(figsize=(10, 6))
-plt.plot(threads, linear_ideal, 'b--', label='Linear Ideal (capped at 8 cores)', linewidth=2)
-plt.plot(threads, amdahl_speedup, 'g-', label=f'Amdahl\'s Law (f={f:.3f})', linewidth=2)
-plt.plot(threads_used, actual_speedup, 'ro', markersize=10, label=f'Actual (12 threads, {actual_speedup:.2f}x)')
-plt.axhline(y=my_system_cores, color='gray', linestyle=':', alpha=0.7, label='Core limit')
-
-plt.xlabel('Number of Threads', fontsize=12)
-plt.ylabel('Speedup', fontsize=12)
-plt.title('Speed-up Comparison: Linear Ideal vs Amdahl\'s Law vs Actual\n(8-core system, 4x3 thread grid)', fontsize=14)
-plt.grid(True, alpha=0.3)
-plt.legend(loc='upper left')
-plt.xticks(threads)
-plt.ylim(0, 9)
-
+# plot
+plt.figure()
+plt.plot(N, linear_ideal, label="Linear Ideal")
+plt.plot(N, amdahls, label=f"Amdahls")
+plt.scatter([1], [1.0], label="Single")
+plt.scatter([S], [omp_moret_4_vs_nparallel_speedup], label=f"OpenMP")
+plt.scatter([S], [sharpen_grid_runtime_vs_nparallel_speedup], label=f"PThreaded")
+plt.xlabel("Thread Count")
+plt.ylabel("Speed-up")
+plt.xticks(N)
+plt.grid(True)
+plt.legend()
+plt.tight_layout()
 plt.show()
-
 ```
