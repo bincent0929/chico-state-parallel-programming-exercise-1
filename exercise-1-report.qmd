@@ -115,11 +115,27 @@ plt.show()
 
 ### e):
 
+#### Intuitively
+
 The parallel portion of the code is everything in the `for` loop that comes just after the `pragma` in the `main` function within `ompdct2.c`. Everything else in the program is sequential.
 
 This `for` loop composes a large portion of the program. It has other `for` loops within it and the `dct` and `idct` functions. By Ahmdal's law, this means that, theoretically, because most of the time of the code is spend on the parallelized portion, the program, overall, will completed much quicker.
 
 Determining exactly how much time is spent on the parallelized portion would basically result in it being equal to the time it takes to complete the whole of the program.
+
+#### By The Calculations
+
+As I calculated earlier $SU_{max} = T_{seq} / T_{par} \approx$ `{python} f'{omp_dct_speedup:.2f}'`
+
+Now, I'll use that in Amdahl's equation but I'll rearrange it to present the proportion of code that is being parallelized.
+
+``` {python}
+# the proportion of the program that is paralleized according to Amdahl's law
+threads = 4
+ompdct2_parallelized_portion = (1 - (1 / omp_dct_speedup)) / (1 - (1 / 4))
+```
+
+By my calculations, the portion of the program that was parallelized was `{python} f'{(ompdct2_parallelized_portion * 100):.2f}%'` leaving `{python} f'{((1 - ompdct2_parallelized_portion) * 100):.2f}%'` that wasn't parallelized, according to Amdahl's Law.
 
 ## Part 2
 
@@ -223,6 +239,7 @@ import numpy as np
 my_system_cores = 8
 threads_used = 12
 actual_speedup = sharpen_grid_runtime_vs_nparallel_speedup
+
 seq_time = 11.696272
 par_time = 2.031316
 
